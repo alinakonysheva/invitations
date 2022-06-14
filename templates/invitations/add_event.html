@@ -1,0 +1,13 @@
+{% extends 'invitations/base.html' %}
+
+{% block title %}<title>Adding a new event</title>{% endblock %}
+{% block content %}
+
+    <h1>Adding a new event</h1>
+    <form method="POST" action="/events/add_event/">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="save"> Add </button>
+    </form>
+{% endblock %}
+

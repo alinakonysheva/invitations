@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Group, Guest, Event, Template
-from .forms import NewGroupForm
+from .forms import NewGroupForm, AddEventForm
 
 
 # Create your views here.
@@ -50,6 +50,24 @@ def create_groups(response):
 def events(response):
     events_ = Event.objects.all()
     return render(response, "invitations/events.html", {"events": events_})
+
+
+def add_event(response):
+    if response.method == "POST":
+        form = AddEventForm(response.POST)
+
+        if form.is_valid():
+            n = form.cleaned_data["name"]
+            g = int(form.cleaned_data["group"])
+            t = int(form.cleaned_data["template"])
+            e = Event(name=n, group_id=g, template_id=t)
+            e.save()
+            events_ = Event.objects.all()
+            return render(response, "invitations/events.html", {"events": events_})
+
+    else:
+        form = AddEventForm(response.POST)
+        return render(response, "invitations/add_event.html", {"form": form})
 
 
 def templates(response):
