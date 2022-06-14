@@ -1,0 +1,25 @@
+{% extends 'invitations/base.html' %}
+{% block title %}<title>Templates</title>{% endblock %}
+{% block content %}
+
+    <h1>Templates</h1>
+    <p>Here you can choose template</p>
+
+    <form method="POST" action="#">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if templates %}
+            <ul>
+                {% for template in templates %}
+                    <li>{{ template.name }}, {{ template.content }}</li>
+                    </ul>
+
+                {% endfor %}
+
+        {% else %}
+            <dev><p> You have no templates </p></dev>
+        {% endif %}
+
+    </form>
+{% endblock %}
+

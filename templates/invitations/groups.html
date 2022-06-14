@@ -1,0 +1,31 @@
+{% extends 'invitations/base.html' %}
+{% block title %}<title>Groups</title>{% endblock %}
+{% block content %}
+
+    <h1>Groups</h1>
+    <p>Here you can add or delete a group</p>
+
+    <form method="POST" action="#">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if groups %}
+            <ul>
+                {% for group in groups %}
+                    <li><input type="checkbox" value="clicked" name="c{{item.id}}}}" checked>
+                        <ul>{{ group.name }}</ul>
+                        {% for guest in  group.guest_set.all %}
+                            <li>{{ guest.name }}</li>
+                        {% endfor %}
+
+                    </ul>
+                {% endfor %}
+
+        {% else %}
+            <dev><p> You have no groups </p></dev>
+        {% endif %}
+        <button type="submit" name="save_guest"> Save </button>
+        <input type="text" name="new">
+        <button type="submit" name="save"> Add a new guest </button>
+    </form>
+{% endblock %}
+

@@ -1,0 +1,27 @@
+{% extends 'invitations/base.html' %}
+{% block title %}<title>Events</title>{% endblock %}
+{% block content %}
+
+    <h1>Events</h1>
+    <p>Here you can add or delete an event </p>
+
+    <form method="POST" action="#">
+        {% csrf_token %}
+        {{ form.as_table }}
+        {% if events %}
+            <ul>
+                {% for event in events %}
+                    <li><input type="checkbox" value="clicked" name="c{{event.id}}}}" checked>
+                      {{ event.name }}, {{ event.group }}, {{ event.template }}
+
+                    </ul>
+                {% endfor %}
+
+        {% else %}
+            <dev><p> You have no events yet </p></dev>
+        {% endif %}
+
+        <button type="submit" name="save"> Add a new event </button>
+    </form>
+{% endblock %}
+
