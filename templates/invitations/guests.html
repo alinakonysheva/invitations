@@ -1,5 +1,6 @@
-{% extends 'invitations/base.html' %}
+{% extends 'invitations/home.html' %}
 {% block title %}<title>Guests</title>{% endblock %}
+{% load crispy_forms_tags %}
 {% block content %}
 
     <h1>Guests</h1>
@@ -7,25 +8,25 @@
 
     <form method="POST" action="#">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form|crispy }}
         {% if groups %}
-            <ul>
-                {% for group in groups %}
-                    <li><input type="checkbox" value="clicked" name="c{{item.id}}}}" checked>
-                        <ul>{{ group.name }}</ul>
-                        {% for guest in  group.guest_set.all %}
-                            <li>{{ guest.name }}</li>
-                        {% endfor %}
 
-                    </ul>
-                {% endfor %}
+            {% for group in groups %}
+                <div class="input-group mb-3">
+                    <input type="checkbox" value="clicked" name="c{{ group.name }}}}" checked>
+                    {{ group.name }}
+                    {% for guest in  group.guest_set.all %}
+                        {{ guest.name }}
+                    {% endfor %}
+                </div>
+            {% endfor %}
 
         {% else %}
             <dev><p> You have no groups and no guests </p></dev>
         {% endif %}
-        <button type="submit" name="save_guest"> Save </button>
+        <button type="submit" name="save_guest"> Save</button>
         <input type="text" name="new">
-        <button type="submit" name="save"> Add a new guest </button>
+        <button type="submit" name="save"> Add a new guest</button>
     </form>
 {% endblock %}
 

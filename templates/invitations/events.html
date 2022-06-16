@@ -1,5 +1,6 @@
-{% extends 'invitations/base.html' %}
+{% extends 'invitations/home.html' %}
 {% block title %}<title>Events</title>{% endblock %}
+{% load crispy_forms_tags %}
 {% block content %}
 
     <h1>Events</h1>
@@ -7,7 +8,7 @@
 
     <form method="POST" action="#">
         {% csrf_token %}
-        {{ form.as_table }}
+        {{ form|crispy }}
         {% if events %}
             <ul>
                 {% for event in events %}

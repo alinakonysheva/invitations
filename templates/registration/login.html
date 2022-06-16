@@ -1,0 +1,18 @@
+{% extends "invitations/base.html" %}
+
+{% block title %}<title>Log in</title>{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h1 class="h3 mb-3 font-weight-normal">Please Log in</h1>
+    <form method="post" class="form-group">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="mx-auto" style="width: 200px; height: 10px">
+        </div>
+        <button type="submit" class="btn btn-success">Log in</button>
+        <div class="mx-auto" style="width: 200px; height: 10px">
+        </div>
+        <p> Don't have an account? Create one <a href="register">here</a></p>
+    </form>
+{% endblock %}
