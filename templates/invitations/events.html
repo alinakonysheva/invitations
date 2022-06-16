@@ -6,9 +6,9 @@
     <h1>Events</h1>
     <p>Here you can add or delete an event </p>
 
-    <form method="POST" action="#">
-        {% csrf_token %}
-        {{ form|crispy }}
+{% comment %}    <form method="POST" action="add_event/">
+    {% csrf_token %}
+        {{ form|crispy }}{% endcomment %}
         {% if events %}
             <ul>
                 {% for event in events %}
@@ -22,7 +22,8 @@
             <dev><p> You have no events yet </p></dev>
         {% endif %}
 
-        <div><button type="submit" name="save"> Add a new event </button></div>
-    </form>
+    <div><a href="/events/add_event">add event</a> </div>
+        {% comment %}<div><button type="submit" name="save"> Add a new event </button></div>{% endcomment %}
+    {% comment %}</form>{% endcomment %}
 {% endblock %}
 
