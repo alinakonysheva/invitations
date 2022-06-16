@@ -1,4 +1,4 @@
-{% extends 'invitations/base.html' %}
+{% extends 'register/base.html' %}
 {% block title %}<title>Create an account</title>{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
@@ -6,9 +6,9 @@
     <h1>Hello! </h1>
     <p>Here you can register your account </p>
     <form method="POST" class="form-group">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-success" name="save"> Register! </button>
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-success" name="save"> Register!</button>
     </form>
 {% endblock %}
 
