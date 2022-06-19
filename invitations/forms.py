@@ -19,3 +19,8 @@ class AddEventForm(forms.Form):
 
 class DeleteForm(forms.Form):
     id = forms.IntegerField(label="id")
+
+
+class AddGuestForm(forms.Form):
+    name = forms.CharField(label="Name", max_length=200)
+    group = forms.ChoiceField(label="Group", choices=tuples_existing_groups)

@@ -1,32 +1,56 @@
 {% extends 'invitations/home.html' %}
 {% block title %}<title>Guests</title>{% endblock %}
-{% load crispy_forms_tags %}
 {% block content %}
 
     <h1>Guests</h1>
-    <p>Here you can add or delete a guest to group</p>
+    <form action="/guests/add">
+        <button type="submit" class="btn btn-success">Add a new guest</button>
+    </form>
 
     <form method="POST" action="#">
-        {% csrf_token %}
-        {{ form|crispy }}
-        {% if groups %}
-
+    {% csrf_token %}
+    {% if groups %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Group</th>
+                <th scope="col">Guest, first name</th>
+                <th scope="col">Guest, last name</th>
+                <th scope="col"> </th>
+                <th scope="col"> </th>
+            </tr>
+            </thead>
+            <tbody>
             {% for group in groups %}
-                <div class="input-group mb-3">
-                    <input type="checkbox" value="clicked" name="c{{ group.name }}}}" checked>
-                    {{ group.name }}
-                    {% for guest in  group.guest_set.all %}
-                        {{ guest.name }}
-                    {% endfor %}
-                </div>
+                {% for guest in  group.guest_set.all %}
+                    <tr>
+                        <td>{{ group.name }}</td>
+                        <td>{{ guest.name }}</td>
+                        <td>{{ guest.name }}</td>
+                        <td>
+                            <form action="/guests/change/" method="post">
+                                {% csrf_token %}
+                                <input type="text" name="id" id="guest_{{ guest.id }}"
+                                       value="{{ guest.id }}" hidden>
+                                <button type="submit" class="btn btn-warning">change guest</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="/guests/delete/" method="post">
+                                {% csrf_token %}
+                                <input type="text" name="id" id="guest_{{ guest.id }}"
+                                       value="{{ guest.id }}" hidden>
+                                <button type="submit" class="btn btn-danger">delete guest</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                {% endfor %}
             {% endfor %}
+        </table>
+    {% else %}
+        <dev><p> You have no groups </p></dev>
+    {% endif %}
 
-        {% else %}
-            <dev><p> You have no groups and no guests </p></dev>
-        {% endif %}
-        <button type="submit" name="save_guest"> Save</button>
-        <input type="text" name="new">
-        <button type="submit" name="save"> Add a new guest</button>
-    </form>
 {% endblock %}
 

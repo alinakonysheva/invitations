@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Group, Guest, Event, Template
-from .forms import NewGroupForm, AddEventForm, DeleteForm
+from .forms import NewGroupForm, AddEventForm, DeleteForm, AddGuestForm
 
 
 # Create your views here.
@@ -116,3 +116,42 @@ def templates(response):
 def guests(response):
     groups_ = Group.objects.all()
     return render(response, "invitations/guests.html", {"groups": groups_})
+
+
+def add_guest(response):
+    if response.method == "POST":
+        form = AddGuestForm(response.POST)
+        if form.is_valid():
+            n = form.cleaned_data["name"]
+            g = int(form.cleaned_data["group"])
+            guest = Guest(name=n, group_id=g)
+            guest.save()
+            groups_ = Group.objects.all()
+            return render(response, "invitations/guests.html", {"groups": groups_})
+
+    else:
+        form = AddGuestForm(response.POST)
+        return render(response, "invitations/add_guest.html", {"form": form})
+
+
+def change_guest(response):
+    pass
+
+
+def delete_guest(response):
+    if response.method == "POST":
+        form = DeleteForm(response.POST)
+        if form.is_valid():
+            guest_id = form.cleaned_data["id"]
+            try:
+                guest = Guest.objects.get(id=guest_id)
+                if guest:
+                    guest.delete()
+                    groups_ = Group.objects.all()
+                    return render(response, "invitations/guests.html", {"groups": groups_})
+            except Exception as e:
+                groups_ = Group.objects.all()
+                return render(response, "invitations/guests.html", {"groups": groups_})
+        else:
+            groups_ = Group.objects.all()
+            return render(response, "invitations/guests.html", {"groups": groups_})
