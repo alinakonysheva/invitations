@@ -1,32 +1,35 @@
 {% extends 'invitations/home.html' %}
 {% block title %}<title>Groups</title>{% endblock %}
-{% load crispy_forms_tags %}
+
 {% block content %}
 
     <h1>Groups</h1>
-    <p>Here you can add or delete a group</p>
 
-    <form method="POST" action="#">
-        {% csrf_token %}
-        {{ form|crispy}}
+		<div class="input-group mb-3">
+			<div class="input-group-prepend">
+				<button type="submit" name="newGroup" value="newGroup" class="btn btn-success">Add a group</button>
+			</div>
+			<input type="text" name="new">
+		</div>
+
+		<button type="submit" name="save" value="save" class="btn btn-success">Save</button>
+
         {% if groups %}
-            <ul>
-                {% for group in groups %}
-                    <li><input type="checkbox" value="clicked" name="c{{item.id}}}}" checked>
-                        <ul>{{ group.name }}</ul>
-                        {% for guest in  group.guest_set.all %}
-                            <li>{{ guest.name }}</li>
-                        {% endfor %}
-
-                    </ul>
-                {% endfor %}
-
+            {% for group in groups %}
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>{{ group.name }}</td>
+                        <td><a href="#">delete</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            {% endfor %}
         {% else %}
             <dev><p> You have no groups </p></dev>
         {% endif %}
-        <button type="submit" name="save_guest"> Save </button>
-        <input type="text" name="new">
-        <button type="submit" name="save"> Add a new guest </button>
-    </form>
+
+
+
 {% endblock %}
 
