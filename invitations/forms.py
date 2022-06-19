@@ -1,5 +1,5 @@
 from django import forms
-from .models import Group, Template
+from .models import Group, Template, Guest
 
 existing_groups = Group.objects.all()
 tuples_existing_groups = tuple([(group.id, group.name) for group in existing_groups])
@@ -21,6 +21,8 @@ class DeleteForm(forms.Form):
     id = forms.IntegerField(label="id")
 
 
-class AddGuestForm(forms.Form):
-    name = forms.CharField(label="Name", max_length=200)
-    group = forms.ChoiceField(label="Group", choices=tuples_existing_groups)
+class AddGuestForm(forms.ModelForm):
+    class Meta:
+        model = Guest
+        fields = '__all__'
+

@@ -28,11 +28,11 @@
                         <td>{{ guest.name }}</td>
                         <td>{{ guest.name }}</td>
                         <td>
-                            <form action="/guests/change/" method="post">
+                            <form action="/guests/change/{{ guest.id }}" method="get">
                                 {% csrf_token %}
                                 <input type="text" name="id" id="guest_{{ guest.id }}"
                                        value="{{ guest.id }}" hidden>
-                                <button type="submit" class="btn btn-warning">change guest</button>
+                                <button type="submit" class="btn btn-warning" >change guest</button>
                             </form>
                         </td>
                         <td>

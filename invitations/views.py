@@ -1,15 +1,12 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.db import transaction
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Group, Guest, Event, Template
 from .forms import NewGroupForm, AddEventForm, DeleteForm, AddGuestForm
 
 
-# Create your views here.
-
 def index(response, id):
     group = Group.objects.get(id=id)
     guest_1 = group.guest_set.get(id=1)
-    # return HttpResponse("<h1> %s, %s </h1>" % (group.name, guest_1.name))
     return render(response, "invitations/base.html", {"group_name": group.name, "guest_name": guest_1.name})
 
 
@@ -20,15 +17,6 @@ def home(response):
 def groups(response):
     groups_ = Group.objects.all()
     return render(response, "invitations/groups.html", {"groups": groups_})
-
-
-""" if response.method == "POST":
-        if response.POST.get("save"):
-            for guest in groups_.guest_set.all():
-                if response.POST.get("c" + str(guest)) == "clicked":
-                    
-        elif response.POST.get("save_guest"):
-"""
 
 
 def create_groups(response):
@@ -123,20 +111,28 @@ def add_guest(response):
         form = AddGuestForm(response.POST)
         if form.is_valid():
             n = form.cleaned_data["name"]
-            g = int(form.cleaned_data["group"])
-            guest = Guest(name=n, group_id=g)
+            g = form.cleaned_data["group"]
+            guest = Guest(name=n, group=g)
             guest.save()
             groups_ = Group.objects.all()
             return render(response, "invitations/guests.html", {"groups": groups_})
-
     else:
         form = AddGuestForm(response.POST)
         return render(response, "invitations/add_guest.html", {"form": form})
 
-
-def change_guest(response):
-    pass
-
+def change_guest(response, guest_id):
+    if response.method == "POST":
+        form = AddGuestForm(response.POST)
+        form.is_valid()
+        guest = Guest.objects.select_for_update().get(id=guest_id)
+        guest.name = form.instance.name
+        guest.group = form.instance.group
+        guest.save()
+        return redirect("/guests/")
+    else:
+        guest = Guest.objects.get(id=guest_id)
+        form = AddGuestForm(instance=guest)
+        return render(response, "invitations/change_guest.html", {"form": form})
 
 def delete_guest(response):
     if response.method == "POST":
@@ -147,11 +143,8 @@ def delete_guest(response):
                 guest = Guest.objects.get(id=guest_id)
                 if guest:
                     guest.delete()
-                    groups_ = Group.objects.all()
-                    return render(response, "invitations/guests.html", {"groups": groups_})
+                    return redirect("/guests/")
             except Exception as e:
-                groups_ = Group.objects.all()
-                return render(response, "invitations/guests.html", {"groups": groups_})
+                return redirect("/guests/")
         else:
-            groups_ = Group.objects.all()
-            return render(response, "invitations/guests.html", {"groups": groups_})
+            return redirect("/guests/")

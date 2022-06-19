@@ -13,7 +13,7 @@ urlpatterns = [path(f"<int:id>", views.index, name="index"),
                path(f"events/delete/", views.delete_event, name="delete_event"),
                path(f"groups/delete/", views.delete_group, name="delete_group"),
                path(f"guests/add/", views.add_guest, name="add_guest"),
-               path(f"guests/change/", views.change_guest, name="change_gues"),
+               path(f"guests/change/<int:guest_id>", views.change_guest, name="change_guest"),
                path(f"guests/delete/", views.delete_guest, name="delete_guest"),
 
                ]
