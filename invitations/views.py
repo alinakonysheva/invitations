@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Group, Guest, Event, Template
-from .forms import NewGroupForm, AddEventForm
+from .forms import NewGroupForm, AddEventForm, DeleteForm
 
 
 # Create your views here.
@@ -43,8 +43,27 @@ def create_groups(response):
             return render(response, "invitations/groups.html", {"groups": groups_})
 
     else:
-        new_form = NewGroupForm()
-        return render(response, "invitations/create_groups.html", {"form": new_form})
+        groups_ = Group.objects.all()
+        return render(response, "invitations/create_groups.html", {"groups": groups_})
+
+
+def delete_group(response):
+    if response.method == "POST":
+        form = DeleteForm(response.POST)
+        if form.is_valid():
+            group_id = form.cleaned_data["id"]
+            try:
+                group = Group.objects.get(id=group_id)
+                if group:
+                    group.delete()
+                    groups_ = Group.objects.all()
+                    return render(response, "invitations/groups.html", {"groups": groups_})
+            except Exception as e:
+                groups_ = Group.objects.all()
+                return render(response, "invitations/groups.html", {"groups": groups_})
+        else:
+            groups_ = Group.objects.all()
+            return render(response, "invitations/groups.html", {"groups": groups_})
 
 
 def events(response):
@@ -68,6 +87,25 @@ def add_event(response):
     else:
         form = AddEventForm(response.POST)
         return render(response, "invitations/add_event.html", {"form": form})
+
+
+def delete_event(response):
+    if response.method == "POST":
+        form = DeleteForm(response.POST)
+        if form.is_valid():
+            event_id = form.cleaned_data["id"]
+            try:
+                event = Event.objects.get(id=event_id)
+                if event:
+                    event.delete()
+                    events_ = Event.objects.all()
+                    return render(response, "invitations/events.html", {"events": events_})
+            except Exception as e:
+                events_ = Event.objects.all()
+                return render(response, "invitations/events.html", {"events": events_})
+        else:
+            events_ = Event.objects.all()
+            return render(response, "invitations/events.html", {"events": events_})
 
 
 def templates(response):

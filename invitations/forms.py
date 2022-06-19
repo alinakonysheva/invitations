@@ -9,10 +9,13 @@ tuples_existing_templates = tuple([(template.id, template.name) for template in 
 
 class NewGroupForm(forms.Form):
     name = forms.CharField(label="Name", max_length=200)
-    check = forms.BooleanField(required=False)
 
 
 class AddEventForm(forms.Form):
     name = forms.CharField(label="Name", max_length=200)
     group = forms.ChoiceField(label="Group", choices=tuples_existing_groups)
-    template = forms.ChoiceField(label="Template", choices=tuples_existing_groups)
+    template = forms.ChoiceField(label="Template", choices=tuples_existing_templates)
+
+
+class DeleteForm(forms.Form):
+    id = forms.IntegerField(label="id")

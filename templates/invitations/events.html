@@ -4,26 +4,45 @@
 {% block content %}
 
     <h1>Events</h1>
-    <p>Here you can add or delete an event </p>
+    <form action="/events/add"><button type="submit" class="btn btn-success">Add an event</button></form>
 
-{% comment %}    <form method="POST" action="add_event/">
-    {% csrf_token %}
-        {{ form|crispy }}{% endcomment %}
-        {% if events %}
-            <ul>
-                {% for event in events %}
-                    <li><input type="checkbox" value="clicked" name="c{{event.id}}}}" checked>
-                      {{ event.name }}, {{ event.group }}, {{ event.template }}
 
-                    </ul>
-                {% endfor %}
+    {% if events %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Event</th>
+                <th scope="col">Group</th>
+                <th scope="col">Template</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for event in events %}
 
-        {% else %}
-            <dev><p> You have no events yet </p></dev>
-        {% endif %}
+                <tr>
+                    <td>{{ event.name }}</td>
+                    <td>{{ event.group }}</td>
+                    <td>{{ event.template }}</td>
+                    <td>
+                        <form action="/events/delete/" method="post">
+                            {% csrf_token %}
+                            <input type="text" name="id" id="event_{{ event.id }}"
+                                   value="{{ event.id }}" hidden>
+                            <button type="submit" class="btn btn-danger">delete</button>
 
-    <div><a href="/events/add_event">add event</a> </div>
-        {% comment %}<div><button type="submit" name="save"> Add a new event </button></div>{% endcomment %}
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            {% endfor %}
+        </table>
+    {% else %}
+        <dev><p> You have no events yet </p></dev>
+    {% endif %}
+
+
+    {% comment %}<div><button type="submit" name="save"> Add a new event </button></div>{% endcomment %}
     {% comment %}</form>{% endcomment %}
 {% endblock %}
 
