@@ -1,9 +1,9 @@
 {% extends 'invitations/home.html' %}
 
-{% block title %}<title>Change a guest </title>{% endblock %}
+{% block title %}<title>Change a template </title>{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <form method="POST" action="/guests/change/{{ form.instance.id }}" class="form-group">
+    <form method="POST" action="/templates/change/{{ form.instance.id }}" class="form-group">
         {% csrf_token %}
         <div class="input-group mb-3">
             <div class="input-group-prepend">

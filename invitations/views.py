@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Group, Guest, Event, Template
-from .forms import NewGroupForm, AddEventForm, DeleteForm, AddGuestForm
+from .forms import NewGroupForm, AddEventForm, DeleteForm, AddGuestForm, AddTemplateForm
 
 
 def index(response, id):
@@ -74,6 +74,7 @@ def add_event(response):
 
     else:
         form = AddEventForm(response.POST)
+        form.is_valid()
         return render(response, "invitations/add_event.html", {"form": form})
 
 
@@ -120,6 +121,7 @@ def add_guest(response):
         form = AddGuestForm(response.POST)
         return render(response, "invitations/add_guest.html", {"form": form})
 
+
 def change_guest(response, guest_id):
     if response.method == "POST":
         form = AddGuestForm(response.POST)
@@ -133,6 +135,7 @@ def change_guest(response, guest_id):
         guest = Guest.objects.get(id=guest_id)
         form = AddGuestForm(instance=guest)
         return render(response, "invitations/change_guest.html", {"form": form})
+
 
 def delete_guest(response):
     if response.method == "POST":
@@ -148,3 +151,48 @@ def delete_guest(response):
                 return redirect("/guests/")
         else:
             return redirect("/guests/")
+
+
+def add_template(response):
+    if response.method == "POST":
+        form = AddTemplateForm(response.POST)
+        if form.is_valid():
+            n = form.cleaned_data["name"]
+            c = form.cleaned_data["content"]
+            template_ = Template(name=n, content=c)
+            template_.save()
+            return redirect("/templates/")
+    else:
+        form = AddTemplateForm(response.POST)
+        return render(response, "invitations/add_template.html", {"form": form})
+
+
+def change_template(response, template_id):
+    if response.method == "POST":
+        form = AddTemplateForm(response.POST)
+        form.is_valid()
+        template = Template.objects.select_for_update().get(id=template_id)
+        template.name = form.instance.name
+        template.content = form.instance.content
+        template.save()
+        return redirect("/templates/")
+    else:
+        template = Template.objects.get(id=template_id)
+        form = AddTemplateForm(instance=template)
+        return render(response, "invitations/change_template.html", {"form": form})
+
+
+def delete_template(response):
+    if response.method == "POST":
+        form = DeleteForm(response.POST)
+        if form.is_valid():
+            template_id = form.cleaned_data["id"]
+            try:
+                template = Template.objects.get(id=template_id)
+                if template:
+                    template.delete()
+                    return redirect("/templates/")
+            except Exception as e:
+                return redirect("/templates/")
+        else:
+            return redirect("/templates/")

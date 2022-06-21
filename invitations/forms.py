@@ -1,20 +1,24 @@
 from django import forms
+
 from .models import Group, Template, Guest
 
-existing_groups = Group.objects.all()
-tuples_existing_groups = tuple([(group.id, group.name) for group in existing_groups])
-existing_templates = Template.objects.all()
-tuples_existing_templates = tuple([(template.id, template.name) for template in existing_templates])
+
+def get_tuples_groups():
+    return tuple([(group.id, group.name) for group in Group.objects.all()])
 
 
 class NewGroupForm(forms.Form):
     name = forms.CharField(label="Name", max_length=200)
 
 
+def get_tuples_templates():
+    return tuple([(template.id, template.name) for template in Template.objects.all()])
+
+
 class AddEventForm(forms.Form):
     name = forms.CharField(label="Name", max_length=200)
-    group = forms.ChoiceField(label="Group", choices=tuples_existing_groups)
-    template = forms.ChoiceField(label="Template", choices=tuples_existing_templates)
+    group = forms.ChoiceField(label="Group", choices=get_tuples_groups())
+    template = forms.ChoiceField(label="Template", choices=get_tuples_templates())
 
 
 class DeleteForm(forms.Form):
@@ -26,3 +30,8 @@ class AddGuestForm(forms.ModelForm):
         model = Guest
         fields = '__all__'
 
+
+class AddTemplateForm(forms.ModelForm):
+    class Meta:
+        model = Template
+        fields = '__all__'

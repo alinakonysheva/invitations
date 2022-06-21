@@ -1,26 +1,53 @@
 {% extends 'invitations/home.html' %}
 {% block title %}<title>Templates</title>{% endblock %}
-{% load crispy_forms_tags %}
 {% block content %}
 
     <h1>Templates</h1>
-    <p>Here you can choose template</p>
+    <form action="/templates/add">
+        <button type="submit" class="btn btn-success">Add a new template</button>
+    </form>
 
     <form method="POST" action="#">
-        {% csrf_token %}
-        {{ form|crispy }}
-        {% if templates %}
-            <ul>
-                {% for template in templates %}
-                    <li>{{ template.name }}, {{ template.content }}</li>
-                    </ul>
+    {% csrf_token %}
+    {% if templates %}
+        <table class="table">
+        <caption>List of templates</caption>
+            <thead>
+            <tr>
+                <th scope="col">Template</th>
+                <th scope="col">Content</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody class="table-striped">
+            {% for template in templates %}
 
-                {% endfor %}
+                <tr>
+                    <td>{{ template.name }}</td>
+                    <td class="col-xs-2">{{ template.content }}</td>
+                    <td>
+                        <form action="/templates/change/{{ template.id }}" method="get">
+                            {% csrf_token %}
+                            <input type="text" name="id" id="guest_{{ template.id }}"
+                                   value="{{ template.id }}" hidden>
+                            <button type="submit" class="btn btn-warning">change</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/templates/delete/" method="post">
+                            {% csrf_token %}
+                            <input type="text" name="id" id="template_{{ template.id }}"
+                                   value="{{ template.id }}" hidden>
+                            <button type="submit" class="btn btn-danger">delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
 
-        {% else %}
-            <dev><p> You have no templates </p></dev>
-        {% endif %}
+            {% endfor %}
+        </table>
+    {% endif %}
 
-    </form>
 {% endblock %}
 

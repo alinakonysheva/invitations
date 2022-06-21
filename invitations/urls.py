@@ -15,5 +15,8 @@ urlpatterns = [path(f"<int:id>", views.index, name="index"),
                path(f"guests/add/", views.add_guest, name="add_guest"),
                path(f"guests/change/<int:guest_id>", views.change_guest, name="change_guest"),
                path(f"guests/delete/", views.delete_guest, name="delete_guest"),
+               path(f"templates/add/", views.add_template, name="add_template"),
+               path(f"templates/change/<int:template_id>", views.change_template, name="change_template"),
+               path(f"templates/delete/", views.delete_template, name="delete_template"),
 
                ]
