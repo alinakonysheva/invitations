@@ -35,7 +35,7 @@ class Event(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     template = models.ForeignKey(Template, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
-
+    host = models.CharField(max_length=200)
     # user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="event", null=True)
 
     def __str__(self):

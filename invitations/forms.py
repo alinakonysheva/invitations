@@ -19,6 +19,7 @@ class AddEventForm(forms.Form):
     name = forms.CharField(label="Name", max_length=200)
     group = forms.ChoiceField(label="Group", choices=get_tuples_groups())
     template = forms.ChoiceField(label="Template", choices=get_tuples_templates())
+    host = forms.CharField(label="Host", max_length=200)
 
 
 class DeleteForm(forms.Form):

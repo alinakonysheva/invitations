@@ -4,7 +4,9 @@
 {% block content %}
 
     <h1>Events</h1>
-    <form action="/events/add"><button type="submit" class="btn btn-success">Add an event</button></form>
+    <form action="/events/add">
+        <button type="submit" class="btn btn-success">Add an event</button>
+    </form>
 
 
     {% if events %}
@@ -14,7 +16,10 @@
                 <th scope="col">Event</th>
                 <th scope="col">Group</th>
                 <th scope="col">Template</th>
-                <th scope="col">Action</th>
+                <th scope="col">Host</th>
+                <th scope="col"> Print out all invitations</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
             </tr>
             </thead>
             <tbody>
@@ -24,6 +29,15 @@
                     <td>{{ event.name }}</td>
                     <td>{{ event.group }}</td>
                     <td>{{ event.template }}</td>
+                    <td>{{ event.host }}</td>
+
+                    <td>
+                        <form action="/events/render/{{ event.id }}" method="post" target="_blank">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">render</button>
+                        </form>
+                    </td>
+
                     <td>
                         <form action="/events/delete/" method="post">
                             {% csrf_token %}
@@ -40,9 +54,5 @@
     {% else %}
         <dev><p> You have no events yet </p></dev>
     {% endif %}
-
-
-    {% comment %}<div><button type="submit" name="save"> Add a new event </button></div>{% endcomment %}
-    {% comment %}</form>{% endcomment %}
 {% endblock %}
 

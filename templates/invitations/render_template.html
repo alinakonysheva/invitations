@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ event_name }}</title>
+    <style>
+        @media print
+{
+      .page-break  { display:block; page-break-before:always; }
+        }
+    </style>
+</head>
+<body>
+{% for string in content_strings %}
+    <pre>{{ string }}</pre>
+    <div class="page-break"></div>
+{% endfor %}
+</body>
+</html>

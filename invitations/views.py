@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Group, Guest, Event, Template
@@ -196,3 +198,17 @@ def delete_template(response):
                 return redirect("/templates/")
         else:
             return redirect("/templates/")
+
+
+def render_event(response, event_id):
+    event = Event.objects.get(id=event_id)
+    rendered_content_list = map(lambda g: render_event_for_guest(event, g),
+                                event.group.guest_set.all())
+    return render(response, "invitations/render_template.html",
+                  {"event_name": event.name, "content_strings": rendered_content_list})
+
+
+def render_event_for_guest(event, guest):
+    render_content = event.template.content.replace("_GUEST_NAME_", guest.name) \
+        .replace("_DATE_", str(datetime.date.today()))
+    return render_content
