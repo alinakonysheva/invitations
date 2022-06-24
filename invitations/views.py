@@ -18,9 +18,15 @@ def index(response, id):
 def home(response):
     return render(response, "invitations/home.html")
 
-
+# TODO: response -> request
+# TODO: redirect to login page if not authen
+# TODO: add user
+# TODO: view group: name, list guests
+# TODO: event grouplink - group view
+# TODO logout
 def groups(response):
-    groups_ = Group.objects.all()
+    user = response.user
+    groups_ = user.group.all
     return render(response, "invitations/groups.html", {"groups": groups_})
 
 

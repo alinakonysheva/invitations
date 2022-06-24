@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ event_name }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.3.0/paper.css">
     <style>
         @media print
-{
-      .page-break  { display:block; page-break-before:always; }
+        {
+            .page-break  { display:block; page-break-before:always; }
         }
     </style>
 </head>
-<body>
+<body class="A5">
 {% for string in content_strings %}
-    <pre>{{ string }}</pre>
-    <div class="page-break"></div>
+<div class="sheet padding-10mm" style="background-image: url('https://thumbs.dreamstime.com/z/sea-birthday-invite-kids-party-under-invitation-card-template-cute-marine-life-whale-jellyfish-fish-cartoon-characters-banner-245154255.jpg');">
+        <pre>{{ string }}</pre>
+        <div class="page-break"></div>
+</div>
 {% endfor %}
 </body>
 </html>
