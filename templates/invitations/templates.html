@@ -28,12 +28,7 @@
                     <td>{{ template.name }}</td>
                     <td class="col-xs-2"> <pre>{{ template.content }}</pre></td>
                     <td>
-                        <form action="/templates/change/{{ template.id }}" method="get">
-                            {% csrf_token %}
-                            <input type="text" name="id" id="guest_{{ template.id }}"
-                                   value="{{ template.id }}" hidden>
-                            <button type="submit" class="btn btn-warning">change</button>
-                        </form>
+                        <a href="/templates/change/{{ template.id }}" class="btn btn-warning">change </a>
                     </td>
                     <td>
                         <form action="/templates/delete/" method="post">

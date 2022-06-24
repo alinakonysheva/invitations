@@ -17,6 +17,7 @@
                 <th scope="col">Group</th>
                 <th scope="col">Template</th>
                 <th scope="col">Host</th>
+                <th scope="col">Date</th>
                 <th scope="col"> Print out all invitations</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
@@ -30,7 +31,7 @@
                     <td>{{ event.group }}</td>
                     <td>{{ event.template }}</td>
                     <td>{{ event.host }}</td>
-
+                    <td>{{ event.date }}</td>
                     <td>
                         <form action="/events/render/{{ event.id }}" method="post" target="_blank">
                             {% csrf_token %}

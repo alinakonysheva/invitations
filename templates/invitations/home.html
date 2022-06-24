@@ -1,7 +1,7 @@
 {% extends 'invitations/base.html' %}
 {% block content %}
     <h3>Create Page</h3>
-     <form method="post" action="/create/" class="form-group">
+     <form method="get" action="/events/add/" class="form-group">
          {% csrf_token %}
          <div class="input-group mb-3">
              <div class="input-group-prepend">

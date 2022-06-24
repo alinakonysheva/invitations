@@ -2,6 +2,9 @@ import datetime
 
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.defaultfilters import time
+from datetime import date
+
 from .models import Group, Guest, Event, Template
 from .forms import NewGroupForm, AddEventForm, DeleteForm, AddGuestForm, AddTemplateForm
 
@@ -67,9 +70,17 @@ def add_event(response):
 
         if form.is_valid():
             n = form.cleaned_data["name"]
-            g = int(form.cleaned_data["group"])
-            t = int(form.cleaned_data["template"])
-            e = Event(name=n, group_id=g, template_id=t)
+            g = form.cleaned_data["group"]
+            t = form.cleaned_data["template"]
+            h = form.cleaned_data["host"]
+            d = str(form.cleaned_data["date"])
+            st = str(form.cleaned_data["start"])
+            fin = str(form.cleaned_data["finish"])
+            pl = form.cleaned_data["place"]
+            cn = form.cleaned_data["contact_number"]
+            cp = form.cleaned_data["contact_person"]
+            e = Event(name=n, group_id=g.id, template_id=t.id, host=h, place=pl,
+                      contact_number=cn, contact_person=cp, date=d, start=st, finish=fin)
             e.save()
             events_ = Event.objects.all()
             return render(response, "invitations/events.html", {"events": events_})
@@ -113,9 +124,17 @@ def add_guest(response):
     if response.method == "POST":
         form = AddGuestForm(response.POST)
         if form.is_valid():
-            n = form.cleaned_data["name"]
+            n = form.cleaned_data["first_name"]
             g = form.cleaned_data["group"]
-            guest = Guest(name=n, group=g)
+            ln = form.cleaned_data["last_name"]
+            pn = form.cleaned_data["parent_name"]
+            p_ph = form.cleaned_data["parent_phone"]
+            email = form.cleaned_data["email"]
+            phone = form.cleaned_data["phone"]
+            address = form.cleaned_data["address"]
+
+            guest = Guest(first_name=n, group=g, last_name=ln, parent_name=pn, parent_phone=p_ph,
+                          email=email, phone=phone, address=address)
             guest.save()
             groups_ = Group.objects.all()
             return render(response, "invitations/guests.html", {"groups": groups_})
@@ -129,7 +148,13 @@ def change_guest(response, guest_id):
         form = AddGuestForm(response.POST)
         form.is_valid()
         guest = Guest.objects.select_for_update().get(id=guest_id)
-        guest.name = form.instance.name
+        guest.first_name = form.instance.first_name
+        guest.last_name = form.instance.last_name
+        guest.parent_name = form.instance.parent_name
+        guest.parent_phone = form.instance.parent_phone
+        guest.email = form.instance.email
+        guest.phone = form.instance.phone
+        guest.address = form.instance.address
         guest.group = form.instance.group
         guest.save()
         return redirect("/guests/")
@@ -209,6 +234,6 @@ def render_event(response, event_id):
 
 
 def render_event_for_guest(event, guest):
-    render_content = event.template.content.replace("_GUEST_NAME_", guest.name) \
+    render_content = event.template.content.replace("_GUEST_NAME_", guest.first_name) \
         .replace("_DATE_", str(datetime.date.today()))
     return render_content
