@@ -28,7 +28,7 @@
 
                 <tr>
                     <td>{{ event.name }}</td>
-                    <td>{{ event.group }}</td>
+                    <td><a href="/groups/view_group/{{ event.group.id }}">{{ event.group.name }}</a></td>
                     <td>{{ event.template }}</td>
                     <td>{{ event.host }}</td>
                     <td>{{ event.date }}</td>
@@ -38,7 +38,11 @@
                             <button type="submit" class="btn btn-success">render</button>
                         </form>
                     </td>
+                    <td>
+                        <a href="/events/change/{{ event.id }}" class="btn btn-warning">change</a>
+                    </td>
 
+                    </td>
                     <td>
                         <form action="/events/delete/" method="post">
                             {% csrf_token %}

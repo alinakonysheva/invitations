@@ -1,0 +1,16 @@
+{% extends 'invitations/home.html' %}
+
+{% block title %}<title>Change an event</title>{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <h1>Change an event</h1>
+    <form method="POST" action="/events/change/{{ form.instance.id }}" class="form-group">
+    {% csrf_token %}
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+    {{ form|crispy }}</div>
+    <button type="submit" name="save" class="btn btn-success"> Save changes </button>
+            </div>
+    </form>
+{% endblock %}
+

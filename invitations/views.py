@@ -18,8 +18,10 @@ def home(request):
     return render(request, "invitations/home.html")
 
 
-# TODO: view group: name, list guests
-# TODO: event grouplink - group view
+# TODO: change event
+# TODO: change name of the group
+# TODO: save the name of the group if we add guest from view
+
 
 def groups(request):
     user = request.user
@@ -95,6 +97,35 @@ def add_event(request):
         form = AddEventForm(request.POST)
         form.is_valid()
         return render(request, "invitations/add_event.html", {"form": form})
+
+
+def change_event(request, event_id):
+    user = request.user
+    try:
+        event = user.event.select_for_update().get(id=event_id)
+
+        if request.method == "POST":
+            form = AddEventForm(request.POST)
+
+            if form.is_valid():
+                event.name = form.instance.name
+                event.group = form.instance.group
+                event.template = form.instance.template
+                event.host = form.instance.host
+                event.date = form.instance.date
+                event.start = form.instance.start
+                event.finish = form.instance.finish
+                event.place = form.instance.place
+                event.contact_number = form.instance.contact_number
+                event.contact_person = form.instance.contact_person
+                event.save()
+                return redirect("/events/")
+
+        else:
+            form = AddEventForm(instance=event)
+            return render(request, "invitations/change_event.html", {"form": form})
+    except Event.DoesNotExist:
+        raise Http404("No group matches the given query.")
 
 
 def delete_event(request):
