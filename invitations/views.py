@@ -9,46 +9,45 @@ from .models import Group, Guest, Event, Template
 from .forms import NewGroupForm, AddEventForm, DeleteForm, AddGuestForm, AddTemplateForm
 
 
-def index(response, id):
+def index(request, id):
     group = Group.objects.get(id=id)
     guest_1 = group.guest_set.get(id=1)
-    return render(response, "invitations/base.html", {"group_name": group.name, "guest_name": guest_1.name})
+    return render(request, "invitations/base.html", {"group_name": group.name, "guest_name": guest_1.name})
 
 
-def home(response):
-    return render(response, "invitations/home.html")
+def home(request):
+    return render(request, "invitations/home.html")
 
-# TODO: response -> request
 # TODO: redirect to login page if not authen
-# TODO: add user
+
 # TODO: view group: name, list guests
 # TODO: event grouplink - group view
 # TODO logout
-def groups(response):
-    user = response.user
+def groups(request):
+    user = request.user
     groups_ = user.group.all
-    return render(response, "invitations/groups.html", {"groups": groups_})
+    return render(request, "invitations/groups.html", {"groups": groups_})
 
 
-def create_groups(response):
-    if response.method == "POST":
-        form = NewGroupForm(response.POST)
+def create_groups(request):
+    if request.method == "POST":
+        form = NewGroupForm(request.POST)
 
         if form.is_valid():
             n = form.cleaned_data["name"]
             g = Group(name=n)
             g.save()
             groups_ = Group.objects.all()
-            return render(response, "invitations/groups.html", {"groups": groups_})
+            return render(request, "invitations/groups.html", {"groups": groups_})
 
     else:
         groups_ = Group.objects.all()
-        return render(response, "invitations/create_groups.html", {"groups": groups_})
+        return render(request, "invitations/create_groups.html", {"groups": groups_})
 
 
-def delete_group(response):
-    if response.method == "POST":
-        form = DeleteForm(response.POST)
+def delete_group(request):
+    if request.method == "POST":
+        form = DeleteForm(request.POST)
         if form.is_valid():
             group_id = form.cleaned_data["id"]
             try:
@@ -56,23 +55,23 @@ def delete_group(response):
                 if group:
                     group.delete()
                     groups_ = Group.objects.all()
-                    return render(response, "invitations/groups.html", {"groups": groups_})
+                    return render(request, "invitations/groups.html", {"groups": groups_})
             except Exception as e:
                 groups_ = Group.objects.all()
-                return render(response, "invitations/groups.html", {"groups": groups_})
+                return render(request, "invitations/groups.html", {"groups": groups_})
         else:
             groups_ = Group.objects.all()
-            return render(response, "invitations/groups.html", {"groups": groups_})
+            return render(request, "invitations/groups.html", {"groups": groups_})
 
 
-def events(response):
+def events(request):
     events_ = Event.objects.all()
-    return render(response, "invitations/events.html", {"events": events_})
+    return render(request, "invitations/events.html", {"events": events_})
 
 
-def add_event(response):
-    if response.method == "POST":
-        form = AddEventForm(response.POST)
+def add_event(request):
+    if request.method == "POST":
+        form = AddEventForm(request.POST)
 
         if form.is_valid():
             n = form.cleaned_data["name"]
@@ -89,17 +88,17 @@ def add_event(response):
                       contact_number=cn, contact_person=cp, date=d, start=st, finish=fin)
             e.save()
             events_ = Event.objects.all()
-            return render(response, "invitations/events.html", {"events": events_})
+            return render(request, "invitations/events.html", {"events": events_})
 
     else:
-        form = AddEventForm(response.POST)
+        form = AddEventForm(request.POST)
         form.is_valid()
-        return render(response, "invitations/add_event.html", {"form": form})
+        return render(request, "invitations/add_event.html", {"form": form})
 
 
-def delete_event(response):
-    if response.method == "POST":
-        form = DeleteForm(response.POST)
+def delete_event(request):
+    if request.method == "POST":
+        form = DeleteForm(request.POST)
         if form.is_valid():
             event_id = form.cleaned_data["id"]
             try:
@@ -107,28 +106,28 @@ def delete_event(response):
                 if event:
                     event.delete()
                     events_ = Event.objects.all()
-                    return render(response, "invitations/events.html", {"events": events_})
+                    return render(request, "invitations/events.html", {"events": events_})
             except Exception as e:
                 events_ = Event.objects.all()
-                return render(response, "invitations/events.html", {"events": events_})
+                return render(request, "invitations/events.html", {"events": events_})
         else:
             events_ = Event.objects.all()
-            return render(response, "invitations/events.html", {"events": events_})
+            return render(request, "invitations/events.html", {"events": events_})
 
 
-def templates(response):
+def templates(request):
     templates_ = Template.objects.all()
-    return render(response, "invitations/templates.html", {"templates": templates_})
+    return render(request, "invitations/templates.html", {"templates": templates_})
 
 
-def guests(response):
+def guests(request):
     groups_ = Group.objects.all()
-    return render(response, "invitations/guests.html", {"groups": groups_})
+    return render(request, "invitations/guests.html", {"groups": groups_})
 
 
-def add_guest(response):
-    if response.method == "POST":
-        form = AddGuestForm(response.POST)
+def add_guest(request):
+    if request.method == "POST":
+        form = AddGuestForm(request.POST)
         if form.is_valid():
             n = form.cleaned_data["first_name"]
             g = form.cleaned_data["group"]
@@ -143,15 +142,15 @@ def add_guest(response):
                           email=email, phone=phone, address=address)
             guest.save()
             groups_ = Group.objects.all()
-            return render(response, "invitations/guests.html", {"groups": groups_})
+            return render(request, "invitations/guests.html", {"groups": groups_})
     else:
-        form = AddGuestForm(response.POST)
-        return render(response, "invitations/add_guest.html", {"form": form})
+        form = AddGuestForm(request.POST)
+        return render(request, "invitations/add_guest.html", {"form": form})
 
 
-def change_guest(response, guest_id):
-    if response.method == "POST":
-        form = AddGuestForm(response.POST)
+def change_guest(request, guest_id):
+    if request.method == "POST":
+        form = AddGuestForm(request.POST)
         form.is_valid()
         guest = Guest.objects.select_for_update().get(id=guest_id)
         guest.first_name = form.instance.first_name
@@ -167,12 +166,12 @@ def change_guest(response, guest_id):
     else:
         guest = Guest.objects.get(id=guest_id)
         form = AddGuestForm(instance=guest)
-        return render(response, "invitations/change_guest.html", {"form": form})
+        return render(request, "invitations/change_guest.html", {"form": form})
 
 
-def delete_guest(response):
-    if response.method == "POST":
-        form = DeleteForm(response.POST)
+def delete_guest(request):
+    if request.method == "POST":
+        form = DeleteForm(request.POST)
         if form.is_valid():
             guest_id = form.cleaned_data["id"]
             try:
@@ -186,9 +185,9 @@ def delete_guest(response):
             return redirect("/guests/")
 
 
-def add_template(response):
-    if response.method == "POST":
-        form = AddTemplateForm(response.POST)
+def add_template(request):
+    if request.method == "POST":
+        form = AddTemplateForm(request.POST)
         if form.is_valid():
             n = form.cleaned_data["name"]
             c = form.cleaned_data["content"]
@@ -196,13 +195,13 @@ def add_template(response):
             template_.save()
             return redirect("/templates/")
     else:
-        form = AddTemplateForm(response.POST)
-        return render(response, "invitations/add_template.html", {"form": form})
+        form = AddTemplateForm(request.POST)
+        return render(request, "invitations/add_template.html", {"form": form})
 
 
-def change_template(response, template_id):
-    if response.method == "POST":
-        form = AddTemplateForm(response.POST)
+def change_template(request, template_id):
+    if request.method == "POST":
+        form = AddTemplateForm(request.POST)
         form.is_valid()
         template = Template.objects.select_for_update().get(id=template_id)
         template.name = form.instance.name
@@ -212,12 +211,12 @@ def change_template(response, template_id):
     else:
         template = Template.objects.get(id=template_id)
         form = AddTemplateForm(instance=template)
-        return render(response, "invitations/change_template.html", {"form": form})
+        return render(request, "invitations/change_template.html", {"form": form})
 
 
-def delete_template(response):
-    if response.method == "POST":
-        form = DeleteForm(response.POST)
+def delete_template(request):
+    if request.method == "POST":
+        form = DeleteForm(request.POST)
         if form.is_valid():
             template_id = form.cleaned_data["id"]
             try:
@@ -231,11 +230,11 @@ def delete_template(response):
             return redirect("/templates/")
 
 
-def render_event(response, event_id):
+def render_event(request, event_id):
     event = Event.objects.get(id=event_id)
     rendered_content_list = map(lambda g: render_event_for_guest(event, g),
                                 event.group.guest_set.all())
-    return render(response, "invitations/render_template.html",
+    return render(request, "invitations/render_template.html",
                   {"event_name": event.name, "content_strings": rendered_content_list})
 
 

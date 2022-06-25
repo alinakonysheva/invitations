@@ -94,6 +94,8 @@
                 <a href="/templates">Templates</a>
                 <a href="/guests">Guests</a>
                 <a href="/groups">Groups</a>
+                <a href="/logout">Log out</a>
+
             </div>
 
             <div class="row justify-content-center">
@@ -105,14 +107,14 @@
 
         {% else %}
 
-            <div id="content" class="main">
+            <div id="content" class="list-group w-auto">
+                <div class="list-group-item list-group-item-action d-flex gap-3 py-3">Log in <a href="/login"> here.</a></div>
+                <div class="list-group-item list-group-item-action d-flex gap-3 py-3">Register <a href="/register"> here.</a></div>
 
-                <p>Log in </p> <a href="login"> here.</a>
-                <p>Register </p> <a href="register"> here.</a>
             </div>
 
         {% endif %}
-        <p class="mt-5 mb-3 text-muted card-footer">&copy; Alina 2022 </p>
+        <p class="mt-5 mb-3 text-muted card-footer">&copy Alina 2022 </p>
     </div>
 
 

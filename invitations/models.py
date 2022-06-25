@@ -13,8 +13,6 @@ class Group(models.Model):
         return self.name
 
 
-# итерироваться по группам надо будет так for group in user.group.all
-
 class Guest(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=200)
@@ -33,7 +31,7 @@ class Template(models.Model):
     name = models.CharField(max_length=200)
     content = models.TextField(max_length=500)
 
-    # user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="template", null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="template", null=True)
 
     def __str__(self):
         return self.name
@@ -51,7 +49,7 @@ class Event(models.Model):
     contact_number = models.CharField(max_length=100)
     contact_person = models.CharField(max_length=100)
 
-    # user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="event", null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="event", null=True)
 
     def __str__(self):
         return self.name
