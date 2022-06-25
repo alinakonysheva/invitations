@@ -17,23 +17,14 @@ def get_tuples_templates():
 
 
 class AddEventForm(forms.ModelForm):
-    """    name = forms.CharField(label="Event", max_length=200)
-        group = forms.ChoiceField(label="Group", choices=get_tuples_groups())
-        template = forms.ChoiceField(label="Template", choices=get_tuples_templates())
-        host = forms.CharField(label="Host name", max_length=200)
-        date = forms.DateField(label="Event date")
-        # start = forms.DateTimeField()
-        # finish = forms.DateTimeField()
-        place = forms.CharField(max_length=200)
-        contact_number = forms.CharField(max_length=100)
-        contact_person = forms.CharField(max_length=100)"""
-
     class Meta:
         model = Event
-        fields = '__all__'
+        fields = ['group', 'template', 'name', 'host', 'date', 'start', 'finish', 'place', 'contact_number',
+                  'contact_person']
         widgets = {'date': DateInput(attrs={'type': 'date'}),
                    'start': TimeInput(attrs={'type': 'time'}),
-                   'finish': TimeInput(attrs={'type': 'time'})}
+                   'finish': TimeInput(attrs={'type': 'time'}),
+                   'user': forms.HiddenInput()}
 
 
 class DeleteForm(forms.Form):
@@ -49,4 +40,4 @@ class AddGuestForm(forms.ModelForm):
 class AddTemplateForm(forms.ModelForm):
     class Meta:
         model = Template
-        fields = '__all__'
+        fields = ['name', 'content']

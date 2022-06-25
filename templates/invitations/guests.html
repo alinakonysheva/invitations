@@ -16,6 +16,8 @@
                 <th scope="col">Group</th>
                 <th scope="col">Guest, first name</th>
                 <th scope="col">Guest, last name</th>
+                <th scope="col">Guest, parent</th>
+                <th scope="col">Guest, parent phone</th>
                 <th scope="col"> </th>
                 <th scope="col"> </th>
             </tr>
@@ -24,9 +26,11 @@
             {% for group in groups %}
                 {% for guest in  group.guest_set.all %}
                     <tr>
-                        <td>{{ group.name }}</td>
+                        <td><a href="/groups/view_group/{{ group.id }}">{{ group.name }}</a></td>
                         <td>{{ guest.first_name}}</td>
                         <td>{{ guest.last_name }}</td>
+                        <td>{{ guest.parent_name}}</td>
+                        <td>{{ guest.parent_phone }}</td>
                         <td>
                             <a href="/guests/change/{{ guest.id }}" class="btn btn-warning">change guest</a>
                         </td>

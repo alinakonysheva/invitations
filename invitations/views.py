@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import transaction
+from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.defaultfilters import time
 from datetime import date
@@ -9,39 +10,37 @@ from .models import Group, Guest, Event, Template
 from .forms import NewGroupForm, AddEventForm, DeleteForm, AddGuestForm, AddTemplateForm
 
 
-def index(request, id):
-    group = Group.objects.get(id=id)
-    guest_1 = group.guest_set.get(id=1)
-    return render(request, "invitations/base.html", {"group_name": group.name, "guest_name": guest_1.name})
+def index(request):
+    return render(request, "invitations/home.html")
 
 
 def home(request):
     return render(request, "invitations/home.html")
 
-# TODO: redirect to login page if not authen
 
 # TODO: view group: name, list guests
 # TODO: event grouplink - group view
-# TODO logout
+
 def groups(request):
     user = request.user
-    groups_ = user.group.all
+    groups_ = user.group.all()
     return render(request, "invitations/groups.html", {"groups": groups_})
 
 
 def create_groups(request):
+    user = request.user
     if request.method == "POST":
         form = NewGroupForm(request.POST)
 
         if form.is_valid():
             n = form.cleaned_data["name"]
             g = Group(name=n)
+            g.user = user
             g.save()
-            groups_ = Group.objects.all()
+            groups_ = user.group.all()
             return render(request, "invitations/groups.html", {"groups": groups_})
-
     else:
-        groups_ = Group.objects.all()
+        groups_ = user.group.all()
         return render(request, "invitations/create_groups.html", {"groups": groups_})
 
 
@@ -65,11 +64,13 @@ def delete_group(request):
 
 
 def events(request):
-    events_ = Event.objects.all()
+    user = request.user
+    events_ = user.event.all()
     return render(request, "invitations/events.html", {"events": events_})
 
 
 def add_event(request):
+    user = request.user
     if request.method == "POST":
         form = AddEventForm(request.POST)
 
@@ -85,9 +86,9 @@ def add_event(request):
             cn = form.cleaned_data["contact_number"]
             cp = form.cleaned_data["contact_person"]
             e = Event(name=n, group_id=g.id, template_id=t.id, host=h, place=pl,
-                      contact_number=cn, contact_person=cp, date=d, start=st, finish=fin)
+                      contact_number=cn, contact_person=cp, date=d, start=st, finish=fin, user=user)
             e.save()
-            events_ = Event.objects.all()
+            events_ = user.event.all()
             return render(request, "invitations/events.html", {"events": events_})
 
     else:
@@ -97,6 +98,7 @@ def add_event(request):
 
 
 def delete_event(request):
+    user = request.user
     if request.method == "POST":
         form = DeleteForm(request.POST)
         if form.is_valid():
@@ -108,24 +110,27 @@ def delete_event(request):
                     events_ = Event.objects.all()
                     return render(request, "invitations/events.html", {"events": events_})
             except Exception as e:
-                events_ = Event.objects.all()
+                events_ = user.event.all()
                 return render(request, "invitations/events.html", {"events": events_})
         else:
-            events_ = Event.objects.all()
+            events_ = user.event.all()
             return render(request, "invitations/events.html", {"events": events_})
 
 
 def templates(request):
-    templates_ = Template.objects.all()
+    user = request.user
+    templates_ = user.template.all()
     return render(request, "invitations/templates.html", {"templates": templates_})
 
 
 def guests(request):
-    groups_ = Group.objects.all()
+    user = request.user
+    groups_ = user.group.all()
     return render(request, "invitations/guests.html", {"groups": groups_})
 
 
 def add_guest(request):
+    user = request.user
     if request.method == "POST":
         form = AddGuestForm(request.POST)
         if form.is_valid():
@@ -141,7 +146,7 @@ def add_guest(request):
             guest = Guest(first_name=n, group=g, last_name=ln, parent_name=pn, parent_phone=p_ph,
                           email=email, phone=phone, address=address)
             guest.save()
-            groups_ = Group.objects.all()
+            groups_ = user.group.all
             return render(request, "invitations/guests.html", {"groups": groups_})
     else:
         form = AddGuestForm(request.POST)
@@ -186,12 +191,13 @@ def delete_guest(request):
 
 
 def add_template(request):
+    user = request.user
     if request.method == "POST":
         form = AddTemplateForm(request.POST)
         if form.is_valid():
             n = form.cleaned_data["name"]
             c = form.cleaned_data["content"]
-            template_ = Template(name=n, content=c)
+            template_ = Template(name=n, content=c, user=user)
             template_.save()
             return redirect("/templates/")
     else:
@@ -242,3 +248,12 @@ def render_event_for_guest(event, guest):
     render_content = event.template.content.replace("_GUEST_NAME_", guest.first_name) \
         .replace("_DATE_", str(datetime.date.today()))
     return render_content
+
+
+def view_group(request, group_id):
+    try:
+        group = Group.objects.get(id=group_id)
+        return render(request, "invitations/view_group.html", {"group": group})
+
+    except Group.DoesNotExist:
+        raise Http404("No group matches the given query.")

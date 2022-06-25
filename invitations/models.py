@@ -17,11 +17,11 @@ class Guest(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
-    parent_name = models.CharField(max_length=200)
-    parent_phone = models.CharField(max_length=200)
-    email = models.EmailField(help_text="jaan@mail.com")
-    phone = models.CharField(max_length=200)
-    address = models.CharField(max_length=200)
+    parent_name = models.CharField(max_length=200, default='Unknown')
+    parent_phone = models.CharField(max_length=200, default='Unknown')
+    email = models.EmailField(help_text="jaan@mail.com", default='Unknown')
+    phone = models.CharField(max_length=200, default='Unknown')
+    address = models.CharField(max_length=200, default='Unknown')
 
     def __str__(self):
         return self.first_name
@@ -40,7 +40,7 @@ class Template(models.Model):
 class Event(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     template = models.ForeignKey(Template, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200, help_text="Jaan wordt 7!")
+    name = models.CharField(max_length=200)
     host = models.CharField(max_length=100)
     date = models.DateField(default=date.today())
     start = models.TimeField(default=datetime.time(16, 00))

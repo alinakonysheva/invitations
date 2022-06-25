@@ -19,5 +19,6 @@ urlpatterns = [path(f"<int:id>", views.index, name="index"),
                path(f"templates/change/<int:template_id>", views.change_template, name="change_template"),
                path(f"templates/delete/", views.delete_template, name="delete_template"),
                path(f"events/render/<int:event_id>", views.render_event, name="render_event"),
+               path(f"groups/view_group/<int:group_id>", views.view_group, name="view_group"),
 
                ]
