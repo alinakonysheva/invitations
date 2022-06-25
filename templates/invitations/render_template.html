@@ -14,21 +14,21 @@
     </style>
 </head>
 <body class="A5">
+{% for string in content_strings %}
 <div class="sheet padding-10mm"
      style="background-image: url('https://thumbs.dreamstime.com/z/sea-birthday-invite-kids-party-under-invitation-card-template-cute-marine-life-whale-jellyfish-fish-cartoon-characters-banner-245154255.jpg');">
 
     <div class="card-body position-sticky" style="margin-top: 20rem; margin-left: 15rem">
         <h5 class="card-title">_EVENT_</h5>
         <div class="card-text">
-            {% for string in content_strings %}
                 <p>{{ string }}</p>
-            {% endfor %}
             <p class="card-text"><small class="text-muted">From _HOST_</small></p>
         <div class="page-break"></div>
         </div>
     </div>
 
 </div>
+{% endfor %}
 
 </body>
 </html>

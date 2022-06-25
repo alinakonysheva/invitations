@@ -74,11 +74,12 @@ def events(request):
 def add_event(request):
     user = request.user
     if request.method == "POST":
-        form = AddEventForm(request.POST)
+        user_group_all = list(map(lambda group_: (group_.id, group_.name), user.group.all()))
+        form = AddEventForm(request.POST, groups=user_group_all)
 
         if form.is_valid():
             n = form.cleaned_data["name"]
-            g = form.cleaned_data["group"]
+            group = user.group.all().get(id=int(form.cleaned_data["group"]))
             t = form.cleaned_data["template"]
             h = form.cleaned_data["host"]
             d = str(form.cleaned_data["date"])
@@ -87,15 +88,18 @@ def add_event(request):
             pl = form.cleaned_data["place"]
             cn = form.cleaned_data["contact_number"]
             cp = form.cleaned_data["contact_person"]
-            e = Event(name=n, group_id=g.id, template_id=t.id, host=h, place=pl,
+            e = Event(name=n, group=group, template_id=t.id, host=h, place=pl,
                       contact_number=cn, contact_person=cp, date=d, start=st, finish=fin, user=user)
             e.save()
             events_ = user.event.all()
             return render(request, "invitations/events.html", {"events": events_})
+        else:
+            return render(request, "invitations/add_event.html", {"form": form})
 
     else:
-        form = AddEventForm(request.POST)
-        form.is_valid()
+        user_group_all = list(map(lambda group: (group.id, group.name), user.group.all()))
+        form = AddEventForm(request.POST, groups=user_group_all)
+        is_valid = form.is_valid()
         return render(request, "invitations/add_event.html", {"form": form})
 
 
@@ -105,11 +109,12 @@ def change_event(request, event_id):
         event = user.event.select_for_update().get(id=event_id)
 
         if request.method == "POST":
-            form = AddEventForm(request.POST)
+            user_group_all = list(map(lambda group_: (group_.id, group_.name), user.group.all()))
+            form = AddEventForm(request.POST, groups=user_group_all)
 
             if form.is_valid():
                 event.name = form.instance.name
-                event.group = form.instance.group
+                event.group = user.group.get(id=int(form.cleaned_data['group']))
                 event.template = form.instance.template
                 event.host = form.instance.host
                 event.date = form.instance.date
@@ -120,9 +125,12 @@ def change_event(request, event_id):
                 event.contact_person = form.instance.contact_person
                 event.save()
                 return redirect("/events/")
+            else:
+                return render(request, "invitations/change_event.html", {"form": form})
 
         else:
-            form = AddEventForm(instance=event)
+            user_group_all = list(map(lambda group: (group.id, group.name), user.group.all()))
+            form = AddEventForm(instance=event, groups=user_group_all, initial={'group': str(event.group_id)})
             return render(request, "invitations/change_event.html", {"form": form})
     except Event.DoesNotExist:
         raise Http404("No group matches the given query.")

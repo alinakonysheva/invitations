@@ -1,3 +1,4 @@
+import django.forms.widgets
 from django import forms
 from django.forms import NumberInput, DateInput, TimeInput
 
@@ -17,9 +18,16 @@ def get_tuples_templates():
 
 
 class AddEventForm(forms.ModelForm):
+
+    def __init__(self, *args, groups, **kwargs):
+        super(forms.ModelForm, self).__init__(*args, **kwargs)
+        self.fields['group'].choices = sorted(groups, key=lambda t: t[1])
+
+    group = forms.ChoiceField(choices=(), required=True)
+
     class Meta:
         model = Event
-        fields = ['group', 'template', 'name', 'host', 'date', 'start', 'finish', 'place', 'contact_number',
+        fields = ['template', 'name', 'host', 'date', 'start', 'finish', 'place', 'contact_number',
                   'contact_person']
         widgets = {'date': DateInput(attrs={'type': 'date'}),
                    'start': TimeInput(attrs={'type': 'time'}),
