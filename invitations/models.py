@@ -33,7 +33,6 @@ class Template(models.Model):
     template_file = models.TextField(max_length=500)
     example_img = models.TextField(max_length=500)
 
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="template", null=True)
 
     def __str__(self):
