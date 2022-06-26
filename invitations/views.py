@@ -1,13 +1,10 @@
 import datetime
 
-from django.db import transaction
 from django.http import Http404
-from django.shortcuts import render, redirect, get_object_or_404
-from django.template.defaultfilters import time
-from datetime import date
+from django.shortcuts import render, redirect
 
-from .models import Group, Guest, Event, Template
 from .forms import NewGroupForm, AddEventForm, DeleteForm, AddGuestForm, AddTemplateForm
+from .models import Group, Guest, Event, Template
 
 
 def index(request):
@@ -18,10 +15,8 @@ def home(request):
     return render(request, "invitations/home.html")
 
 
-# TODO: change event
 # TODO: change name of the group
-# TODO: save the name of the group if we add guest from view
-
+# TODO: спрятать
 
 def groups(request):
     user = request.user
@@ -157,8 +152,7 @@ def delete_event(request):
 
 
 def templates(request):
-    user = request.user
-    templates_ = user.template.all()
+    templates_ = Template.objects.all()
     return render(request, "invitations/templates.html", {"templates": templates_})
 
 
@@ -171,10 +165,11 @@ def guests(request):
 def add_guest(request):
     user = request.user
     if request.method == "POST":
-        form = AddGuestForm(request.POST)
+        user_group_all = list(map(lambda group_: (group_.id, group_.name), user.group.all()))
+        form = AddGuestForm(request.POST, groups=user_group_all)
         if form.is_valid():
             n = form.cleaned_data["first_name"]
-            g = form.cleaned_data["group"]
+            g = user.group.get(id=int(form.cleaned_data['group']))
             ln = form.cleaned_data["last_name"]
             pn = form.cleaned_data["parent_name"]
             p_ph = form.cleaned_data["parent_phone"]
@@ -188,13 +183,16 @@ def add_guest(request):
             groups_ = user.group.all
             return render(request, "invitations/guests.html", {"groups": groups_})
     else:
-        form = AddGuestForm(request.POST)
+        user_group_all = list(map(lambda group: (group.id, group.name), user.group.all()))
+        form = AddGuestForm(request.POST, groups=user_group_all)
         return render(request, "invitations/add_guest.html", {"form": form})
 
 
 def change_guest(request, guest_id):
+    user = request.user
     if request.method == "POST":
-        form = AddGuestForm(request.POST)
+        user_group_all = list(map(lambda group_: (group_.id, group_.name), user.group.all()))
+        form = AddGuestForm(request.POST, groups=user_group_all)
         form.is_valid()
         guest = Guest.objects.select_for_update().get(id=guest_id)
         guest.first_name = form.instance.first_name
@@ -204,12 +202,13 @@ def change_guest(request, guest_id):
         guest.email = form.instance.email
         guest.phone = form.instance.phone
         guest.address = form.instance.address
-        guest.group = form.instance.group
+        guest.group = user.group.get(id=int(form.cleaned_data['group']))
         guest.save()
         return redirect("/guests/")
     else:
-        guest = Guest.objects.get(id=guest_id)
-        form = AddGuestForm(instance=guest)
+        user_group_all = list(map(lambda group: (group.id, group.name), user.group.all()))
+        guest = Guest.objects.get(id=guest_id) # TODO: get user's guests only
+        form = AddGuestForm(instance=guest, groups=user_group_all, initial={'group': str(guest.group_id)})
         return render(request, "invitations/change_guest.html", {"form": form})
 
 
@@ -279,7 +278,7 @@ def render_event(request, event_id):
     event = Event.objects.get(id=event_id)
     rendered_content_list = map(lambda g: render_event_for_guest(event, g),
                                 event.group.guest_set.all())
-    return render(request, "invitations/render_template.html",
+    return render(request, f"invitations/{event.template.template_file}",
                   {"event_name": event.name, "content_strings": rendered_content_list})
 
 

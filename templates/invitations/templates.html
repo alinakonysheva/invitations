@@ -3,9 +3,11 @@
 {% block content %}
 
     <h1>Templates</h1>
+    {% if user.is_superuser %}
     <form action="/templates/add">
         <button type="submit" class="btn btn-success">Add a new template</button>
     </form>
+    {% endif %}
 
     <form method="POST" action="#">
     {% csrf_token %}
@@ -16,17 +18,22 @@
             <tr>
                 <th scope="col">Template</th>
                 <th scope="col">Content</th>
+                {% if user.is_superuser %}
                 <th scope="col"></th>
                 <th scope="col"></th>
+                {% endif %}
                 <th scope="col"></th>
             </tr>
             </thead>
             <tbody class="table-striped">
+            {% load static %}
             {% for template in templates %}
 
                 <tr>
                     <td>{{ template.name }}</td>
                     <td class="col-xs-2"> <pre>{{ template.content }}</pre></td>
+
+                    {% if user.is_superuser %}
                     <td>
                         <a href="/templates/change/{{ template.id }}" class="btn btn-warning">change </a>
                     </td>
@@ -37,6 +44,10 @@
                                    value="{{ template.id }}" hidden>
                             <button type="submit" class="btn btn-danger">delete</button>
                         </form>
+                    </td>
+                    {% endif %}
+                    <td>
+                        <img src="{% static template.example_img %}" width="200"/>
                     </td>
                 </tr>
                 </tbody>

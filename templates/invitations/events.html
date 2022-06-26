@@ -28,14 +28,20 @@
 
                 <tr>
                     <td>{{ event.name }}</td>
-                    <td><a href="/groups/view_group/{{ event.group.id }}">{{ event.group.name }}</a></td>
+                    <td>
+                        <a href="/groups/view_group/{{ event.group.id }}">{{ event.group.name }}({{ event.group.guest_set.all.count }})</a>
+                    </td>
                     <td>{{ event.template }}</td>
                     <td>{{ event.host }}</td>
                     <td>{{ event.date }}</td>
                     <td>
                         <form action="/events/render/{{ event.id }}" method="post" target="_blank">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-success">render</button>
+                            {% if  event.group.guest_set.all.count %}
+                                <button type="submit" class="btn btn-success">render</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-success" disabled>render</button>
+                            {% endif %}
                         </form>
                     </td>
                     <td>

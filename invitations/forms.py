@@ -40,9 +40,16 @@ class DeleteForm(forms.Form):
 
 
 class AddGuestForm(forms.ModelForm):
+
+    def __init__(self, *args, groups, **kwargs):
+        super(forms.ModelForm, self).__init__(*args, **kwargs)
+        self.fields['group'].choices = sorted(groups, key=lambda t: t[1])
+
+    group = forms.ChoiceField(choices=(), required=True)
+
     class Meta:
         model = Guest
-        fields = '__all__'
+        fields = ['last_name', 'first_name', 'last_name', 'parent_name', 'parent_phone', 'email', 'phone', 'address']
 
 
 class AddTemplateForm(forms.ModelForm):

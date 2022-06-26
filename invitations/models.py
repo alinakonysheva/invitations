@@ -30,6 +30,9 @@ class Guest(models.Model):
 class Template(models.Model):
     name = models.CharField(max_length=200)
     content = models.TextField(max_length=500)
+    template_file = models.TextField(max_length=500)
+    example_img = models.TextField(max_length=500)
+
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="template", null=True)
 

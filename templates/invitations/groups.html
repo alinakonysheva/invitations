@@ -25,7 +25,7 @@
             <tbody>
             {% for group in groups %}
                 <tr>
-                    <td><a href="/groups/view_group/{{ group.id }}">{{ group.name }}</a></td>
+                    <td><a href="/groups/view_group/{{ group.id }}">{{ group.name }}({{ group.guest_set.all.count }})</a></td>
                     <td>
                         <form action="/groups/delete/" method="post">
                             {% csrf_token %}
