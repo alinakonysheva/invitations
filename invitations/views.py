@@ -16,7 +16,7 @@ def home(request):
 
 
 # TODO: change name of the group
-# TODO: спрятать
+
 
 def groups(request):
     user = request.user
