@@ -4,23 +4,22 @@
 
     <h1>Templates</h1>
     {% if user.is_superuser %}
-    <form action="/templates/add">
-        <button type="submit" class="btn btn-success">Add a new template</button>
-    </form>
+        <form action="/templates/add">
+            <button type="submit" class="btn btn-success">Add a new template</button>
+        </form>
     {% endif %}
 
     <form method="POST" action="#">
     {% csrf_token %}
     {% if templates %}
         <table class="table">
-        <caption>List of templates</caption>
+            <caption>List of templates</caption>
             <thead>
             <tr>
                 <th scope="col">Template</th>
-                <th scope="col">Content</th>
                 {% if user.is_superuser %}
-                <th scope="col"></th>
-                <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
                 {% endif %}
                 <th scope="col"></th>
             </tr>
@@ -31,23 +30,25 @@
 
                 <tr>
                     <td>{{ template.name }}</td>
-                    <td class="col-xs-2"> <pre>{{ template.content }}</pre></td>
 
                     {% if user.is_superuser %}
-                    <td>
-                        <a href="/templates/change/{{ template.id }}" class="btn btn-warning">change </a>
-                    </td>
-                    <td>
-                        <form action="/templates/delete/" method="post">
-                            {% csrf_token %}
-                            <input type="text" name="id" id="template_{{ template.id }}"
-                                   value="{{ template.id }}" hidden>
-                            <button type="submit" class="btn btn-danger">delete</button>
-                        </form>
-                    </td>
+                        <td>
+                            <a href="/templates/change/{{ template.id }}" class="btn btn-warning">change </a>
+                        </td>
+                        <td>
+                            <form action="/templates/delete/" method="post">
+                                {% csrf_token %}
+                                <input type="text" name="id" id="template_{{ template.id }}"
+                                       value="{{ template.id }}" hidden>
+                                <button type="submit" class="btn btn-danger">delete</button>
+                            </form>
+                        </td>
                     {% endif %}
                     <td>
-                        <img src="{% static template.example_img %}" width="200"/>
+                        <div style="height: 800px; width: 45%; overflow: hidden;">
+                            <img
+                                    src="{% static template.example_img %}"/></div>
+
                     </td>
                 </tr>
                 </tbody>

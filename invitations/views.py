@@ -349,23 +349,28 @@ def render_event(request, event_id):
         rendered_content_list = map(lambda g: render_event_for_guest(event, g),
                                     event.group.guest_set.all())
         return render(request, f"invitations/{event.template.template_file}",
-                      {"event_name": event.name, "content_strings": rendered_content_list})
+                      {"event": event, "content_strings": rendered_content_list})
     except Event.DoesNotExist:
         raise Http404("No group matches the given query.")
 
 
 def render_event_for_guest(event, guest):
     try:
-        render_content = event.template.content.replace("_GUEST_NAME_", guest.first_name) \
-            .replace("_DATE_", str(datetime.date.today()))
+        render_content = event.template.content.replace("_GUEST_NAME_", f'{guest.first_name} <br>') \
+            .replace("_DATE_", str(datetime.date.today())).replace("_TIME_START_",
+                                                                   event.start).replace("_TIME_END_",
+                                                                                        event.finish).replace(
+            "_CONTACT_PHONE_", f'{event.contact_number} - {event.contact_person}')
+        # .replace("_HOST_", event.host)
         return render_content
     except Guest.DoesNotExist:
         raise Http404("No group matches the given query.")
 
 
 def view_group(request, group_id):
+    user = request.user
     try:
-        group = Group.objects.get(id=group_id)
+        group = user.group.get(id=group_id)
         return render(request, "invitations/view_group.html", {"group": group})
 
     except Group.DoesNotExist:
