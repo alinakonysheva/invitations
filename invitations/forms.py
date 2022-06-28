@@ -57,8 +57,6 @@ class AddGuestForm(forms.ModelForm):
     group = forms.ChoiceField(choices=(), required=True)
 
 
-
-
 class AddTemplateForm(forms.ModelForm):
     class Meta:
         model = Template
