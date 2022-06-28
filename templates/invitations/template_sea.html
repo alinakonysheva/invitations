@@ -6,6 +6,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.3.0/paper.css">
     <style>
         @media print {
+            @page {
+                padding: 0;
+                margin: 0;
+            }
+
             .page-break {
                 display: block;
                 page-break-before: always;
@@ -15,27 +20,27 @@
 </head>
 
 {% for guest in event.group.guest_set.all %}
-<body class="A5">
-{% load static %}
-<div class="sheet padding-10mm"
-     style="background-image: url({% static 'sea.jpg' %});">
+    <body class="A5">
+    {% load static %}
+    <div class="sheet padding-10mm"
+         style="background-image: url({% static 'sea.jpg' %});">
 
-    <div class="card-body position-sticky" style="margin-top: 20rem; margin-left: 15rem">
-        <h5 class="card-title">{{ event.name }}</h5>
-        <div class="card-text">
+        <div class="card-body position-sticky" style="margin-top: 20rem; margin-left: 15rem">
+            <h5 class="card-title">{{ event.name }}</h5>
+            <div class="card-text">
                 <p>Dear {{ guest.first_name }}, </p>
                 <p>I am happy to invite you to my</p>
-                   <p> {{ event.name }}.</p>
+                <p> {{ event.name }}.</p>
                 <p>Date: <b>{{ event.date }}</b></p>
                 <p>From <b>{{ event.start }}</b> to <b>{{ event.finish }}</b>.</p>
                 <p>Place: <b>{{ event.place }}</b>.</p>
                 <p>Please replay to {{ event.contact_number }}, {{ event.contact_person }}.</p>
-            <p class="card-text"> with love, {{event.host}}</p>
-        <div class="page-break"></div>
+                <p class="card-text"> with love, {{ event.host }}</p>
+                <div class="page-break"></div>
+            </div>
         </div>
-    </div>
 
-</div>
+    </div>
 {% endfor %}
 
 </body>

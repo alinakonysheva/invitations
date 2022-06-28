@@ -3,8 +3,9 @@
 
 {% block content %}
 
-    <h1>Friends</h1>
-    <form action="/groups/add", method="post">
+    <h2>Friends</h2>
+
+    <form action="/groups/add" method="post">
     {% csrf_token %}
     <div class="input-group mb-3">
         <input type="text" name="name">

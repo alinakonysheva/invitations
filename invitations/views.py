@@ -22,7 +22,7 @@ def groups(request):
         groups_ = user.group.all()
         return render(request, "invitations/groups.html", {"groups": groups_})
     except Exception as e:
-        messages.error(f'{e}')
+        messages.error(request, f'{e}')
         return redirect('/home/')
 
 
@@ -38,17 +38,18 @@ def create_groups(request):
                     g = Group(name=n)
                     g.user = user
                     g.save()
-                    messages.success(request, "Group was created successfully!")
                     groups_ = user.group.all()
+                    messages.success(request, "Group was created successfully!")
                     return render(request, "invitations/groups.html", {"groups": groups_})
             else:
                 groups_ = user.group.all()
                 return render(request, "invitations/create_groups.html", {"groups": groups_})
         except Exception as e:
+            messages.error(request, f'{e}')
             groups_ = user.group.all()
             return render(request, "invitations/groups.html", {"groups": groups_})
     except Exception as e:
-        messages.error(f'{e}')
+        messages.error(request, f'{e}')
         return redirect('/home/')
 
 
@@ -68,13 +69,13 @@ def delete_group(request):
                         return render(request, "invitations/groups.html", {"groups": groups_})
                 except Exception as e:
                     groups_ = user.group.all()
-                    messages.error(f'{e}')
+                    messages.error(request, f'{e}')
                     return render(request, "invitations/groups.html", {"groups": groups_})
             else:
                 groups_ = user.group.all()
                 return render(request, "invitations/groups.html", {"groups": groups_})
         except Group.DoesNotExist:
-            messages.error('Wrong group id')
+            messages.error(request, 'Wrong group id')
             return redirect('/group/')
 
 
@@ -84,7 +85,7 @@ def events(request):
         events_ = user.event.all()
         return render(request, "invitations/events.html", {"events": events_})
     except Exception as e:
-        messages.error(f'{e}')
+        messages.error(request, f'{e}')
         return redirect('/home/')
 
 
@@ -121,7 +122,7 @@ def add_event(request):
             form.is_valid()
             return render(request, "invitations/add_event.html", {"form": form})
     except Exception as e:
-        messages.error(f"{e}")
+        messages.error(request, f"{e}")
         return redirect('/home/')
 
 
@@ -159,7 +160,7 @@ def change_event(request, event_id):
         except Event.DoesNotExist:
             raise Http404("No group matches the given query.")
     except Exception as e:
-        messages.error(f'{e}')
+        messages.error(request, f'{e}')
         return redirect('/home/')
 
 
@@ -183,7 +184,7 @@ def delete_event(request):
                 events_ = user.event.all()
                 return render(request, "invitations/events.html", {"events": events_})
     except Exception as e:
-        messages.error(f'{e}')
+        messages.error(request, f'{e}')
         return redirect('/home/')
 
 
@@ -192,7 +193,7 @@ def templates(request):
         templates_ = Template.objects.all()
         return render(request, "invitations/templates.html", {"templates": templates_})
     except Exception as e:
-        messages.error(f'{e}')
+        messages.error(request, f'{e}')
         return redirect('/home/')
 
 
@@ -202,7 +203,7 @@ def guests(request):
         groups_ = user.group.all()
         return render(request, "invitations/guests.html", {"groups": groups_})
     except Exception as e:
-        messages.error(f'{e}')
+        messages.error(request, f'{e}')
         return redirect('/home/')
 
 
@@ -233,7 +234,7 @@ def add_guest(request):
             form = AddGuestForm(request.POST, groups=user_group_all)
             return render(request, "invitations/add_guest.html", {"form": form})
     except Exception as e:
-        messages.error(f'{e}')
+        messages.error(request, f'{e}')
 
 
 def change_guest(request, guest_id):
@@ -261,7 +262,7 @@ def change_guest(request, guest_id):
             form = AddGuestForm(instance=guest, groups=user_group_all, initial={'group': str(guest.group_id)})
             return render(request, "invitations/change_guest.html", {"form": form})
     except Guest.DoesNotExist:
-        messages.error('Guest does not exist')
+        messages.error(request, 'Guest does not exist')
         return redirect("/guests/")
 
 
@@ -278,7 +279,7 @@ def delete_guest(request):
                         messages.success(request, "Guest was deleted successfully!")
                         return redirect("/guests/")
                 except Exception as e:
-                    messages.error(f'{e}')
+                    messages.error(request, f'{e}')
                     return redirect("/guests/")
             else:
                 return redirect("/guests/")
@@ -302,7 +303,7 @@ def add_template(request):
             form = AddTemplateForm(request.POST)
             return render(request, "invitations/add_template.html", {"form": form})
     except Exception as e:
-        messages.error(f'{e}')
+        messages.error(request, f'{e}')
         raise Http404("No group matches the given query.")
 
 
@@ -337,7 +338,7 @@ def delete_template(request):
                     messages.success(request, "template was deleted successfully!")
                     return redirect("/templates/")
             except Exception as e:
-                messages.error(f'{e}')
+                messages.error(request, f'{e}')
                 return redirect("/templates/")
         else:
             return redirect("/templates/")
