@@ -103,3 +103,31 @@ class TestForms(TestCase):
         groups = list(map(lambda group_: (group_.id, group_.name), group_all))
         form = AddGuestForm(groups=groups, data={})
         self.assertFalse(form.is_valid())
+
+    def test_new_event_form(self):
+        group_all = Group.objects.all()
+        groups = list(map(lambda group_: (group_.id, group_.name), group_all))
+        form = AddEventForm(groups=groups, data={'name': C_EVENT_NAME, 'group': self.group1, 'template': self.template1,
+                                                 'host': 'C_HOST',
+                                                 'date': C_DATE, 'start': C_TIME_START, 'finish': C_TIME_FINISH,
+                                                 'place': C_PLACE,
+                                                 'contact_number': C_CONTACT_NUMBER,
+                                                 'contact_person': C_CONTACT_PERSON})
+
+    def test_new_event_form_no_data(self):
+        group_all = Group.objects.all()
+        groups = list(map(lambda group_: (group_.id, group_.name), group_all))
+        form = AddEventForm(groups=groups, data={})
+        self.assertFalse(form.is_valid())
+
+    def test_new_event_form_long_name(self):
+        group_all = Group.objects.all()
+        groups = list(map(lambda group_: (group_.id, group_.name), group_all))
+        form = AddEventForm(groups=groups,
+                            data={'name': C_INCORRECT_NAME, 'group': self.group1, 'template': self.template1,
+                                  'host': 'C_HOST',
+                                  'date': C_DATE, 'start': C_TIME_START, 'finish': C_TIME_FINISH,
+                                  'place': C_PLACE,
+                                  'contact_number': C_CONTACT_NUMBER,
+                                  'contact_person': C_CONTACT_PERSON})
+        self.assertFalse(form.is_valid())
